@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DermDiag.Migrations
 {
     [DbContext(typeof(DermDiagContext))]
-    [Migration("20240422165310_Init")]
-    partial class Init
+    [Migration("20240422195625_addRate")]
+    partial class addRate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,11 +108,6 @@ namespace DermDiag.Migrations
                     b.Property<decimal?>("Fees")
                         .HasColumnType("decimal(10, 2)");
 
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("First_Name");
-
                     b.Property<string>("Gender")
                         .HasMaxLength(10)
                         .IsUnicode(false)
@@ -123,10 +118,10 @@ namespace DermDiag.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("Name")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Last_Name");
+                        .HasColumnName("Name");
 
                     b.Property<int?>("NoReviews")
                         .HasColumnType("int")
@@ -145,6 +140,9 @@ namespace DermDiag.Migrations
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
+
+                    b.Property<float?>("Rating")
+                        .HasColumnType("real");
 
                     b.HasKey("Id")
                         .HasName("PK__Doctor__3214EC277293A442");
@@ -222,19 +220,14 @@ namespace DermDiag.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateOnly?>("Dob")
-                        .HasColumnType("date")
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2")
                         .HasColumnName("DOB");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
-
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("First_Name");
 
                     b.Property<string>("Gender")
                         .HasMaxLength(10)
@@ -246,10 +239,10 @@ namespace DermDiag.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("Name")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Last_Name");
+                        .HasColumnName("Name");
 
                     b.Property<string>("Password")
                         .HasMaxLength(255)

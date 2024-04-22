@@ -8,11 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<Authentication>();
+builder.Services.AddScoped<PatientRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DermDiagContext>(option =>
-option.UseSqlServer(builder.Configuration.GetConnectionString("RANA")));
+option.UseSqlServer(builder.Configuration.GetConnectionString("OnlineConnection")));
 
 var app = builder.Build();
 

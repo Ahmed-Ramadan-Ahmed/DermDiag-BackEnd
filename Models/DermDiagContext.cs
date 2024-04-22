@@ -102,18 +102,16 @@ public partial class DermDiagContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Fees).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.FirstName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(255)
-                .HasColumnName("First_Name");
+                .HasColumnName("Name");
             entity.Property(e => e.Gender)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.LastName)
-                .HasMaxLength(255)
-                .HasColumnName("Last_Name");
+           
             entity.Property(e => e.NoReviews).HasColumnName("No_Reviews");
             entity.Property(e => e.NoSessions).HasColumnName("No_Sessions");
             entity.Property(e => e.Password)
@@ -178,18 +176,16 @@ public partial class DermDiagContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.FirstName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(255)
-                .HasColumnName("First_Name");
+                .HasColumnName("Name");
             entity.Property(e => e.Gender)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.LastName)
-                .HasMaxLength(255)
-                .HasColumnName("Last_Name");
+            
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .IsUnicode(false);

@@ -4,6 +4,7 @@ using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DermDiag.Migrations
 {
     [DbContext(typeof(DermDiagContext))]
-    partial class DermDiagContextModelSnapshot : ModelSnapshot
+    [Migration("20240422192358_UpdateName")]
+    partial class UpdateName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +140,6 @@ namespace DermDiag.Migrations
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
-
-                    b.Property<float?>("Rating")
-                        .HasColumnType("real");
 
                     b.HasKey("Id")
                         .HasName("PK__Doctor__3214EC277293A442");
