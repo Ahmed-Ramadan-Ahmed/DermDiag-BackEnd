@@ -63,7 +63,7 @@ namespace DermDiag.Repository
         {
             try
             {
-                if (context1.Patients.Any(p => p.Email == doctotr.Email))
+                if (context1.Doctors.Any(p => p.Email == doctotr.Email))
                 {
                     return false;
                 }
