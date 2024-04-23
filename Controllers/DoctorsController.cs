@@ -16,10 +16,11 @@ namespace DermDiag.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly Authentication _context;
-
-        public DoctorsController(Authentication context)
+        private readonly DoctorRepository _doctorRepository;
+        public DoctorsController(Authentication context, DoctorRepository doctorRepository)
         {
             _context = context;
+            _doctorRepository = doctorRepository;
         }
 
 
@@ -60,6 +61,21 @@ namespace DermDiag.Controllers
         {
 
             if (_context.LoginDoctor(login)) { return Ok(); } else { return Unauthorized(); };
+        }
+
+
+        [HttpGet("SearchPatients")]
+        public ActionResult<IEnumerable<PatientHomeDTO>> SearchPatientsByName(string patientName)
+        {
+            try
+            {
+                return Ok(_doctorRepository.SearchPatientsByName(patientName));
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
         }
 
         // PUT: api/Doctors/5

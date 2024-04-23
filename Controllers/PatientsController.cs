@@ -38,6 +38,21 @@ namespace DermDiag.Controllers
             
         }
 
+
+        [HttpGet("SearchDoctors")]
+        public ActionResult<IEnumerable<DoctorHomeDTO>> SearchDoctorsByName(string DoctorName, int P_Id)
+        {
+            try
+            {
+                return Ok(_patientRepository.SearchDoctorsByName(DoctorName, P_Id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+        }
+
         //// GET: api/Patients/5
         //[HttpGet("{id}")]
         //public async Task<ActionResult<Patient>> GetPatients(int id)
