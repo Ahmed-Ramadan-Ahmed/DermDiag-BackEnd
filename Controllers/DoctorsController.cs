@@ -23,28 +23,7 @@ namespace DermDiag.Controllers
             _doctorRepository = doctorRepository;
         }
 
-
-        // GET: api/Doctors
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors()
-        //{
-        //    return await _context.Doctors.ToListAsync();
-        //}
-
-        //// GET: api/Doctors/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Doctor>> GetDoctor(int id)
-        //{
-        //    var doctor = await _context.Doctors.FindAsync(id);
-
-        //    if (doctor == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return doctor;
-        //}
-
+        /*################################## REGISTERATION ##################################*/
 
         [HttpPost("RegisterDoctor")]
 
@@ -55,6 +34,8 @@ namespace DermDiag.Controllers
 
         }
 
+        /*################################## LOGIN ##################################*/
+
         [HttpPost("LoginDoctor")]
 
         public IActionResult LoginDoctor(LoginDTO login)
@@ -62,6 +43,8 @@ namespace DermDiag.Controllers
 
             if (_context.LoginDoctor(login)) { return Ok("Login Successfully"); } else { return Unauthorized("Unauthorized!!"); };
         }
+
+        /*################################## SEARCH FOR PATIENTS ##################################*/
 
 
         [HttpGet("SearchPatients")]
@@ -78,81 +61,28 @@ namespace DermDiag.Controllers
 
         }
 
+
+        /*################################## GET ALL PATIENTS ##################################*/
+
+        [HttpGet("GetAllPatients")]
+        public ActionResult<IEnumerable<PatientHomeDTO>> GetAllPatients(int id)
+        {
+            try
+            {
+                return Ok(_doctorRepository.GetAllPatients(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+        }
+
         // PUT: api/Doctors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutDoctor(int id, Doctor doctor)
-        //{
-        //    if (id != doctor.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(doctor).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!DoctorExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
+    
         //// POST: api/Doctors
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Doctor>> PostDoctor(Doctor doctor)
-        //{
-        //    _context.Doctors.Add(doctor);
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (DoctorExists(doctor.Id))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
-        //}
-
-        //// DELETE: api/Doctors/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteDoctor(int id)
-        //{
-        //    var doctor = await _context.Doctors.FindAsync(id);
-        //    if (doctor == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Doctors.Remove(doctor);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool DoctorExists(int id)
-        //{
-        //    return _context.Doctors.Any(e => e.Id == id);
-        //}
+       
     }
 }

@@ -13,24 +13,36 @@ namespace DermDiag.Repository
             _context = context;
 
         }
+        /*################################## GET ALL PATIENTS ##################################*/
 
-        //public List<PatientHomeDTO> SearchPatientsByName(string patientName)
-        //{
-        //    var patients = _context.Patients
-        //        .Where(d => EF.Functions.Like(d.Name, $"%{patientName}%"));
+        public List<PatientHomeDTO> GetAllPatients(int Id)
+        {
+            var doctor = _context.Doctors.Include(d => d.Patients).FirstOrDefault(d => d.Id == Id);
+            if (doctor == null)
+            {
+                throw new Exception("Doctor not found!");
+            }
 
-        //    List<PatientHomeDTO> ReturnPatients = new List<PatientHomeDTO>();
-        //    foreach (var doctor in patients)
-        //    {
-        //        ReturnPatients.Add(new PatientHomeDTO()
-        //        {
-        //            Name = doctor.Name,
-        //            Image = doctor.Image,
+            if (doctor.Patients == null || doctor.Patients.Count == 0)
+            {
+                throw new Exception("No patients associated with this doctor!");
+            }
 
-        //        });
-        //    }
-        //    return ReturnPatients;
-        //}
+            List<PatientHomeDTO> returnPatients = new List<PatientHomeDTO>();
+            foreach (var patient in doctor.Patients)
+            {
+                var appointmentDate = _context.Books.FirstOrDefault(b => b.DoctorId == Id && b.PatientId == patient.Id)?.AppointmentDate;
+                returnPatients.Add(new PatientHomeDTO
+                {
+                    Name = patient.Name,
+                    Image = patient.Image,
+                    AppointmentDate = appointmentDate
+                });
+            }
+            return returnPatients;
+        }
+
+        /*################################## SEARCH FOR PATIENTS ##################################*/
 
         public List<PatientHomeDTO> SearchPatientsByName(string patientName)
         {
