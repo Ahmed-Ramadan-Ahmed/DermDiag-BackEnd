@@ -59,7 +59,7 @@ namespace DermDiag.Controllers
 
         /*################################## LOGOUT ##################################*/
 
-        
+
 
         /*################################## GET ALL DOCTORS ##################################*/
 
@@ -69,11 +69,12 @@ namespace DermDiag.Controllers
             try
             {
                 return Ok(_patientRepository.GetAll(id));
-            }catch (Exception ex)
-            {
-                return NotFound();  
             }
-            
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
         }
 
         /*################################## SEARCH FOR DOCTORS ##################################*/
@@ -94,7 +95,7 @@ namespace DermDiag.Controllers
 
         /*################################## ADD FAVORITE DOCTORS ##################################*/
 
-        [HttpPost("AddFavoriteDoctors")] 
+        [HttpPost("AddFavoriteDoctors")]
 
         public IActionResult AddFavoriteDoctors(int patientId, int doctorId)
         {

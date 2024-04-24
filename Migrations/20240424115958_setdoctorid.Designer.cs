@@ -12,8 +12,8 @@
 //namespace DermDiag.Migrations
 //{
 //    [DbContext(typeof(DermDiagContext))]
-//    [Migration("20240422192358_UpdateName")]
-//    partial class UpdateName
+//    [Migration("20240424115958_setdoctorid")]
+//    partial class setdoctorid
 //    {
 //        /// <inheritdoc />
 //        protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,6 +140,9 @@
 //                        .HasMaxLength(20)
 //                        .IsUnicode(false)
 //                        .HasColumnType("varchar(20)");
+
+//                    b.Property<float?>("Rating")
+//                        .HasColumnType("real");
 
 //                    b.HasKey("Id")
 //                        .HasName("PK__Doctor__3214EC277293A442");

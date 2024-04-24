@@ -29,7 +29,7 @@ namespace DermDiag.Repository
                 var newPatient = new Patient
                 {
                     Name = patient.Name,
-                
+
                     Email = patient.Email,
                     Password = patient.Password,
                     Phone = patient.Phone,

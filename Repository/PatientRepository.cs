@@ -11,17 +11,17 @@ namespace DermDiag.Repository
         {
             context1 = context;
         }
-        
+
         /*################################## GET ALL DOCTORS ##################################*/
 
-        public List<DoctorHomeDTO> GetAll(int Id) 
+        public List<DoctorHomeDTO> GetAll(int Id)
         {
-            var docotrs = context1.Doctors.ToList(); 
-            var patient = context1.Patients.Include(p => p.Doctors).FirstOrDefault(p => p.Id == Id );
+            var docotrs = context1.Doctors.ToList();
+            var patient = context1.Patients.Include(p => p.Doctors).FirstOrDefault(p => p.Id == Id);
 
-            if ( patient == null )
+            if (patient == null)
             {
-                throw new Exception("Not Found!"); 
+                throw new Exception("Not Found!");
             }
 
             List<DoctorHomeDTO> ReturnDoctors = new List<DoctorHomeDTO>();
@@ -33,8 +33,8 @@ namespace DermDiag.Repository
                     Id = doctor.Id,
                     Name = doctor.Name,
                     Rating = doctor.Rating,
-                    IsFavourite = patient.Doctors.FirstOrDefault(d => d.Id == doctor.Id) != null ? true : false, 
-                }) ;
+                    IsFavourite = patient.Doctors.FirstOrDefault(d => d.Id == doctor.Id) != null ? true : false,
+                });
             }
             return ReturnDoctors;
         }
@@ -90,7 +90,7 @@ namespace DermDiag.Repository
                 Id = doctor.Id,
                 Name = doctor.Name,
                 Rating = doctor.Rating,
-                IsFavourite = true 
+                IsFavourite = true
             }).ToList();
 
             return favoriteDoctors;
@@ -105,18 +105,18 @@ namespace DermDiag.Repository
                 var patient = context1.Patients.FirstOrDefault(p => p.Id == patientId);
                 if (patient == null)
                 {
-                    return false; 
+                    return false;
                 }
 
                 var doctor = context1.Doctors.FirstOrDefault(d => d.Id == doctorId);
                 if (doctor == null)
                 {
-                    return false; 
+                    return false;
                 }
 
                 if (patient.Doctors.Any(d => d.Id == doctorId))
                 {
-                    return false; 
+                    return false;
                 }
 
                 patient.Doctors.Add(doctor);
@@ -136,21 +136,21 @@ namespace DermDiag.Repository
         {
             try
             {
-                var patient = context1.Patients.FirstOrDefault(p => p.Id == patientId);
+                var patient = context1.Patients.Include(p=>p.Doctors).FirstOrDefault(p => p.Id == patientId);
                 if (patient == null)
                 {
-                    return false; 
+                    return false;
                 }
 
                 var doctor = context1.Doctors.FirstOrDefault(d => d.Id == doctorId);
                 if (doctor == null)
                 {
-                    return false; 
+                    return false;
                 }
 
                 if (!patient.Doctors.Any(d => d.Id == doctorId))
                 {
-                    return false; 
+                    return false;
                 }
 
                 patient.Doctors.Remove(doctor);
@@ -159,7 +159,7 @@ namespace DermDiag.Repository
                 return true;
             }
             catch (Exception ex)
-            { 
+            {
                 return false;
             }
         }

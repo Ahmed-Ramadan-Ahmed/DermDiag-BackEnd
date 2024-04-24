@@ -93,7 +93,7 @@ public partial class DermDiagContext : DbContext
             entity.HasIndex(e => e.Email, "UQ__Doctor__A9D105344BCD1DAD").IsUnique();
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+              //  .ValueGeneratedNever()
                 .HasColumnName("ID");
             entity.Property(e => e.AcceptanceStatus).HasColumnName("Acceptance_Status");
             entity.Property(e => e.Address).HasMaxLength(255);
@@ -111,7 +111,7 @@ public partial class DermDiagContext : DbContext
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-           
+
             entity.Property(e => e.NoReviews).HasColumnName("No_Reviews");
             entity.Property(e => e.NoSessions).HasColumnName("No_Sessions");
             entity.Property(e => e.Password)
@@ -185,7 +185,7 @@ public partial class DermDiagContext : DbContext
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            
+
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .IsUnicode(false);

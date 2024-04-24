@@ -7,11 +7,11 @@ namespace DermDiag.Repository
     public class DoctorRepository
     {
         private readonly DermDiagContext _context;
-        
+
         public DoctorRepository(DermDiagContext context)
         {
             _context = context;
-            
+
         }
 
         //public List<PatientHomeDTO> SearchPatientsByName(string patientName)
