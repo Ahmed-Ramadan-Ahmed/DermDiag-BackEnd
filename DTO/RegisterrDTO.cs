@@ -15,6 +15,8 @@ namespace DermDiag.DTO
         public string? Gender { get; set; }
 
         public DateTime? Dob { get; set; }
+        public string? Image { get; set; }
+
 
     }
 }

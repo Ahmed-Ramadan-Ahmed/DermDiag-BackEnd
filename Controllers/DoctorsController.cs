@@ -80,9 +80,33 @@ namespace DermDiag.Controllers
 
         // PUT: api/Doctors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    
+
         //// POST: api/Doctors
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-       
+        ///
+        /*################################## Update Profile ##################################*/
+
+        [HttpPut("EditProfileDoctor")]
+        public IActionResult UpdateDoctorProfile(int doctortId, string newName, string newEmail, string newPhoneNumber, string newPassword, string newImage, string newDescription)
+        {
+            try
+            {
+                if (_doctorRepository.UpdateDoctorProfile(doctortId, newName, newEmail, newPhoneNumber, newPassword, newImage, newDescription))
+                {
+                    return Ok("Doctor profile updated successfully!");
+                }
+                else
+                {
+                    return NotFound("Doctor not found or failed to update profile.");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, "An error occurred while processing the request.");
+
+
+            }
+        }
     }
 }

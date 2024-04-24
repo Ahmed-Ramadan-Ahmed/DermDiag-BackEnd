@@ -58,5 +58,35 @@ namespace DermDiag.Repository
 
             return patients;
         }
+        /*################################## Update Profile ##################################*/
+
+        public bool UpdateDoctorProfile(int doctortId, string newName, string newEmail, string newPhoneNumber, string newPassword, string newImage,string newDescription)
+        {
+            try
+            {
+                var doctor = _context.Doctors.FirstOrDefault(p => p.Id == doctortId);
+                if (doctor == null)
+                {
+                    return false; // Patient not found
+                }
+
+                // Update patient's information
+                doctor.Name = newName;
+                doctor.Email = newEmail;
+                doctor.Phone = newPhoneNumber;
+                doctor.Password = newPassword;
+                doctor.Image = newImage;
+                doctor.Description = newDescription;
+
+                _context.SaveChanges(); // Save changes to the database
+
+                return true; // Successfully updated
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions, logging, etc.
+                return false; // Update failed
+            }
+        }
     }
 }

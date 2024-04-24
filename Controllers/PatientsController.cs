@@ -156,6 +156,30 @@ namespace DermDiag.Controllers
             }
         }
 
+        /*################################## Update Profile ##################################*/
 
+        [HttpPut("EditProfilePatient")]
+        public IActionResult UpdatePatientProfile(int patientId, string newName, string newEmail, string newPhoneNumber, string newPassword, string newImage)
+        {
+            try
+            {
+                if (_patientRepository.UpdatePatientProfile(patientId, newName, newEmail, newPhoneNumber, newPassword, newImage))
+                {
+                    return Ok("Patient profile updated successfully!");
+                }
+                else
+                {
+                    return NotFound("Patient not found or failed to update profile.");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, "An error occurred while processing the request.");
+
+
+            }
+        }
     }
 }
+    

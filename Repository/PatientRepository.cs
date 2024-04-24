@@ -1,6 +1,7 @@
 ﻿using DermDiag.DTO;
 using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace DermDiag.Repository
 {
@@ -161,6 +162,36 @@ namespace DermDiag.Repository
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        /*################################## Update Profile ##################################*/
+
+        public bool UpdatePatientProfile(int patientId, string newName, string newEmail, string newPhoneNumber,string newPassword, string newImage)
+        {
+            try
+            {
+                var patient = context1.Patients.FirstOrDefault(p => p.Id == patientId);
+                if (patient == null)
+                {
+                    return false; // Patient not found
+                }
+
+                // Update patient's information
+                patient.Name = newName;
+                patient.Email = newEmail;
+                patient.Phone = newPhoneNumber;
+                patient.Password= newPassword;
+                patient.Image = newImage;
+
+                context1.SaveChanges(); // Save changes to the database
+
+                return true; // Successfully updated
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions, logging, etc.
+                return false; // Update failed
             }
         }
 
