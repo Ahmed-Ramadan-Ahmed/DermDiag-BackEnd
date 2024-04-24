@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DermDiag.Models;
+using Microsoft.PowerBI.Security;
 
 namespace DermDiag.Controllers
 {
@@ -24,7 +25,44 @@ namespace DermDiag.Controllers
             _patientRepository = patientcontext;
         }
 
-        // GET: api/Patients
+
+        //// PUT: api/Patients/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+        //// POST: api/Patients
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+        /*################################## REGISTERATION ##################################*/
+
+        [HttpPost("Register")]
+
+        public IActionResult Register(RegisterrDTO register)
+        {
+            // Check uniqueness of email
+            if (_context.Register(register)) { return Ok("Registration successful!"); } else { return Conflict("Email is already in use."); }
+
+        }
+
+        /*################################## LOGIN ##################################*/
+
+
+        [HttpPost("Login")]
+
+        public IActionResult Login(LoginDTO login)
+        {
+
+            if (_context.Login(login)) { return Ok(); } else { return Unauthorized(); };
+        }
+
+
+        /*################################## LOGOUT ##################################*/
+
+        
+
+        /*################################## GET ALL DOCTORS ##################################*/
+
         [HttpGet("GetAllDoctors")]
         public ActionResult<IEnumerable<DoctorHomeDTO>> GetAll(int id)
         {
@@ -38,6 +76,7 @@ namespace DermDiag.Controllers
             
         }
 
+        /*################################## SEARCH FOR DOCTORS ##################################*/
 
         [HttpGet("SearchDoctors")]
         public ActionResult<IEnumerable<DoctorHomeDTO>> SearchDoctorsByName(string DoctorName, int P_Id)
@@ -53,93 +92,69 @@ namespace DermDiag.Controllers
 
         }
 
-        //// GET: api/Patients/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Patient>> GetPatients(int id)
-        //{
-        //    var patients = await _context.Patients.FindAsync(id);
+        /*################################## ADD FAVORITE DOCTORS ##################################*/
 
-        //    if (patients == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost("AddFavoriteDoctors")] 
 
-        //    return patients;
-        //}
-
-        //// PUT: api/Patients/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutPatients(int id, Patient patients)
-        //{
-        //    if (id != patients.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(patients).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!PatientsExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        //// POST: api/Patients
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("Register")]
-
-        public IActionResult Register(RegisterrDTO register)
+        public IActionResult AddFavoriteDoctors(int patientId, int doctorId)
         {
-            // Check uniqueness of email
-            if (_context.Register(register)) { return Ok("Registration successful!"); } else { return Conflict("Email is already in use."); }
-           
-        }
-
-        [HttpPost("Login")]
-
-        public IActionResult Login(LoginDTO login)
-        {
-
-            if (_context.Login(login)) { return Ok(); } else { return Unauthorized(); };
+            try
+            {
+                if (_patientRepository.AddFavoriteDoctors(patientId, doctorId))
+                {
+                    return Ok("Favorite doctor added successfully!");
+                }
+                else
+                {
+                    return NotFound("Patient or doctor not found, or already added as favorite.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request."); // Internal Server Error
+            }
         }
 
 
+        /*################################## GET FAVORITE DOCTORS ##################################*/
+
+        [HttpGet("GetFavoriteDoctors")]
+        public ActionResult<IEnumerable<DoctorHomeDTO>> FavoriteDoctors(int id)
+        {
+            try
+            {
+                return Ok(_patientRepository.FavoriteDoctors(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+        }
 
 
+        /*################################## REMOVE FAVORITE DOCTORS ##################################*/
 
-        // DELETE: api/Patients/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeletePatients(int id)
-        //{
-        //    var patients = await _context.Patients.FindAsync(id);
-        //    if (patients == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost("RemoveFavoriteDoctors")]
+        public IActionResult RemoveFavoriteDoctors(int patientId, int doctorId)
+        {
+            try
+            {
+                if (_patientRepository.RemoveFavoriteDoctors(patientId, doctorId))
+                {
+                    return Ok("Favorite doctor removed successfully!");
+                }
+                else
+                {
+                    return NotFound("Patient or doctor not found, or not in favorites list.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
 
-        //    _context.Patients.Remove(patients);
-        //    await _context.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
-
-        //private bool PatientsExists(int id)
-        //{
-        //    return _context.Patients.Any(e => e.Id == id);
-        //}
     }
 }

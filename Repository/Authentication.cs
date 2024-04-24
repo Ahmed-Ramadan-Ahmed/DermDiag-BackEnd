@@ -68,11 +68,9 @@ namespace DermDiag.Repository
                     return false;
                 }
 
-                // Create a new Patient object
                 var newDoctor = new Doctor
                 {
                     Name = doctotr.Name,
-
                     Email = doctotr.Email,
                     Password = doctotr.Password,
                     Phone = doctotr.Phone,

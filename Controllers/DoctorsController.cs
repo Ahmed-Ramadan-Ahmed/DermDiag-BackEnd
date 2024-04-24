@@ -60,7 +60,7 @@ namespace DermDiag.Controllers
         public IActionResult LoginDoctor(LoginDTO login)
         {
 
-            if (_context.LoginDoctor(login)) { return Ok(); } else { return Unauthorized(); };
+            if (_context.LoginDoctor(login)) { return Ok("Login Successfully"); } else { return Unauthorized("Unauthorized!!"); };
         }
 
 
