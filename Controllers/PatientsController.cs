@@ -64,8 +64,6 @@ namespace DermDiag.Controllers
         }
 
 
-
-
         /*################################## GET ALL DOCTORS ##################################*/
 
         [HttpGet("GetAllDoctors")]
@@ -81,6 +79,7 @@ namespace DermDiag.Controllers
             }
 
         }
+
 
         /*################################## SEARCH FOR DOCTORS ##################################*/
 
@@ -98,6 +97,7 @@ namespace DermDiag.Controllers
 
         }
 
+       
         /*################################## ADD FAVORITE DOCTORS ##################################*/
 
         [HttpPost("AddFavoriteDoctors")]
@@ -202,7 +202,7 @@ namespace DermDiag.Controllers
         /*################################## Add Task ##################################*/
 
         [HttpPost("AddTask")]
-        public IActionResult AddTask(int patientId, [FromBody] TaskDTO task)
+        public IActionResult AddTask(int patientId, TaskDTO task)
         {
             try
             {
@@ -224,12 +224,11 @@ namespace DermDiag.Controllers
             try
             {
                 _patientRepository.DeleteTask(P_ID, task_Id);
-                return Ok("Task added successfully!");
+                return Ok("Task Removed successfully!");
 
             }
             catch (Exception ex)
             {
-                // Return generic server error response
                 return StatusCode(500, "An error occurred while processing the request.");
             }
         }

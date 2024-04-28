@@ -249,6 +249,7 @@ namespace DermDiag.Repository
 
                 var newTask = new Tasks()
                 {
+                    PatientId = p_Id,
                     Date = task.Date,
                     Title = task.Title,
                     Note = task.Note,
