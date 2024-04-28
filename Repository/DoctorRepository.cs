@@ -60,24 +60,27 @@ namespace DermDiag.Repository
         }
         /*################################## Update Profile ##################################*/
 
-        public bool UpdateDoctorProfile(int doctortId, string newName, string newEmail, string newPhoneNumber, string newPassword, string newImage,string newDescription)
+        public bool UpdateDoctorProfile(UpdateDoctorDtO d1,int doctortId)
         {
             try
             {
                 var doctor = _context.Doctors.FirstOrDefault(p => p.Id == doctortId);
                 if (doctor == null)
                 {
-                    return false; // Patient not found
+                    return false; 
                 }
 
-                // Update patient's information
-                doctor.Name = newName;
-                doctor.Email = newEmail;
-                doctor.Phone = newPhoneNumber;
-                doctor.Password = newPassword;
-                doctor.Image = newImage;
-                doctor.Description = newDescription;
+                
+                doctor.Name = d1.Name;
+                doctor.Email = d1.Email;
+                doctor.Phone = d1.Phone;
+                doctor.Password = d1.Password;
+                doctor.Image = d1.Image;
+                doctor.Description = d1.Description;
+                doctor.Fees = d1.Fees;
+                doctor.Address = d1.Address;
 
+                _context.Doctors.Update(doctor);
                 _context.SaveChanges(); // Save changes to the database
 
                 return true; // Successfully updated
@@ -88,5 +91,46 @@ namespace DermDiag.Repository
                 return false; // Update failed
             }
         }
+
+        /*################################## Add Medicine list ##################################*/
+
+        public void AddTreatmentPlan(int patientId, int doctorId, List<TreatmentPlanDTO> treatmentPlans)
+        {
+            try
+            {
+                var patient = _context.Patients.FirstOrDefault(p => p.Id == patientId);
+                if (patient == null)
+                {
+                    throw new NullReferenceException("Patient not found!");
+                }
+
+                var doctor = _context.Doctors.FirstOrDefault(p => p.Id == doctorId);
+                if (doctor == null)
+                {
+                    throw new NullReferenceException("Doctor not found!");
+                }
+                // Create a new treatment plan entity
+                foreach (var treatmentPlan in treatmentPlans)
+                {
+                    var newTreatmentPlan = new MedicineAdvice
+                    {
+                        PatientId = patientId,
+                        DoctorId = doctorId,
+                        MedicineName = treatmentPlan.MedicineName,
+                        Quantity = treatmentPlan.Quantity,
+                        Frequency = treatmentPlan.Frequency
+                    };
+
+                    _context.MedicineAdvices.Add(newTreatmentPlan);
+                }
+                _context.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

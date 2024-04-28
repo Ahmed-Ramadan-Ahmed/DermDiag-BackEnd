@@ -28,4 +28,6 @@ public partial class Patient
     public virtual ICollection<PatientModelHistory> PatientModelHistories { get; set; } = new List<PatientModelHistory>();
 
     public virtual ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
+    public virtual ICollection<Tasks> Tasks { get; set; } = new List<Tasks>();
+
 }

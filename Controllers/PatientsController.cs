@@ -53,11 +53,16 @@ namespace DermDiag.Controllers
         public IActionResult Login(LoginDTO login)
         {
 
-            if (_context.Login(login)) { return Ok(); } else { return Unauthorized(); };
+            try
+            {
+                return Ok(_context.Login(login));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
-
-        /*################################## LOGOUT ##################################*/
 
 
 
@@ -159,27 +164,99 @@ namespace DermDiag.Controllers
         /*################################## Update Profile ##################################*/
 
         [HttpPut("EditProfilePatient")]
-        public IActionResult UpdatePatientProfile(int patientId, string newName, string newEmail, string newPhoneNumber, string newPassword, string newImage)
+        public IActionResult UpdatePatientProfile(UpdatePatientDTO Ubdate, int patientId)
         {
+
             try
             {
-                if (_patientRepository.UpdatePatientProfile(patientId, newName, newEmail, newPhoneNumber, newPassword, newImage))
-                {
-                    return Ok("Patient profile updated successfully!");
-                }
-                else
-                {
-                    return NotFound("Patient not found or failed to update profile.");
-                }
+                return Ok(_patientRepository.UpdatePatientProfile(Ubdate, patientId));
             }
             catch (Exception ex)
             {
+                return NotFound(ex.Message);
+            }
+        }
+        /*################################## TreatmentPlan ##################################*/
 
+
+        [HttpGet("GetTreatmentPlan")]
+        public IActionResult GetTreatmentPlan(int doctorId, int patientId)
+        {
+
+            try
+            {
+
+                return Ok(_patientRepository.GetTreatmentPlan(doctorId, patientId));
+            }
+            catch (NullReferenceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, "An error occurred while processing the request.");
+            }
 
+        }
+
+        /*################################## Add Task ##################################*/
+
+        [HttpPost("AddTask")]
+        public IActionResult AddTask(int patientId, [FromBody] TaskDTO task)
+        {
+            try
+            {
+                _patientRepository.AddTask(patientId, task);
+                return Ok("Task added successfully!");
+            }
+            
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+
+        /*################################## Remove Task ##################################*/
+
+        [HttpPost("RemoveTask")]
+        public IActionResult DeleteTasks(int P_ID, int task_Id)
+        {
+            try
+            {
+                _patientRepository.DeleteTask(P_ID, task_Id);
+                return Ok("Task added successfully!");
 
             }
+            catch (Exception ex)
+            {
+                // Return generic server error response
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+
+        /*################################## GET Tasks ##################################*/
+
+
+        [HttpGet("GetTasks")]
+        public IActionResult GetTasks(int patientId)
+        {
+
+            try
+            {
+
+                return Ok(_patientRepository.GetTasks(patientId));
+            }
+            catch (NullReferenceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+
         }
     }
 }
+
     

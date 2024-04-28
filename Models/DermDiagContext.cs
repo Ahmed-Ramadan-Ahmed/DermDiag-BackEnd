@@ -31,8 +31,20 @@ public partial class DermDiagContext : DbContext
 
     public virtual DbSet<Payment> Payments { get; set; }
 
+    public virtual DbSet<Tasks> Tasks { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<Tasks>(entity =>
+        {
+            entity.HasKey(entity => entity.Id);
+            entity.ToTable("Tasks");
+            entity.HasOne(entity => entity.Patient).WithMany(entity => entity.Tasks).HasForeignKey(entity => entity.PatientId);
+
+
+        });
         modelBuilder.Entity<Book>(entity =>
         {
             entity
@@ -125,16 +137,16 @@ public partial class DermDiagContext : DbContext
         modelBuilder.Entity<MedicineAdvice>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("Medicine_Advice");
+                .HasKey(m => new { m.DoctorId, m.PatientId });
+
+            entity.ToTable("Medicine_Advice");
 
             entity.Property(e => e.DoctorId).HasColumnName("Doctor_ID");
-            entity.Property(e => e.EndDate).HasColumnName("End_Date");
             entity.Property(e => e.MedicineName)
                 .HasMaxLength(255)
                 .HasColumnName("Medicine_Name");
             entity.Property(e => e.PatientId).HasColumnName("Patient_ID");
-            entity.Property(e => e.StartDate).HasColumnName("Start_Date");
+            
 
             entity.HasOne(d => d.Doctor).WithMany()
                 .HasForeignKey(d => d.DoctorId)

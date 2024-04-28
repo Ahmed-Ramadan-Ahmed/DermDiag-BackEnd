@@ -4,6 +4,7 @@ using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DermDiag.Migrations
 {
     [DbContext(typeof(DermDiagContext))]
-    partial class DermDiagContextModelSnapshot : ModelSnapshot
+    [Migration("20240428174306_treatment")]
+    partial class treatment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,27 +159,26 @@ namespace DermDiag.Migrations
 
             modelBuilder.Entity("DermDiag.Models.MedicineAdvice", b =>
                 {
-                    b.Property<int>("DoctorId")
+                    b.Property<int?>("DoctorId")
                         .HasColumnType("int")
                         .HasColumnName("Doctor_ID");
 
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int")
-                        .HasColumnName("Patient_ID");
-
-                    b.Property<int>("Frequency")
+                    b.Property<int?>("Frequency")
                         .HasColumnType("int");
 
                     b.Property<string>("MedicineName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("Medicine_Name");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("PatientId")
+                        .HasColumnType("int")
+                        .HasColumnName("Patient_ID");
+
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("DoctorId", "PatientId");
+                    b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
 
@@ -315,44 +317,6 @@ namespace DermDiag.Migrations
                     b.ToTable("Payment", (string)null);
                 });
 
-            modelBuilder.Entity("DermDiag.Models.Tasks", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Endtime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RepeatingDays")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Starttime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Tasks", (string)null);
-                });
-
             modelBuilder.Entity("Favorite", b =>
                 {
                     b.Property<int>("PatientId")
@@ -419,15 +383,11 @@ namespace DermDiag.Migrations
                     b.HasOne("DermDiag.Models.Doctor", "Doctor")
                         .WithMany()
                         .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__Medicine___Docto__59063A47");
 
                     b.HasOne("DermDiag.Models.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__Medicine___Patie__5812160E");
 
                     b.Navigation("Doctor");
@@ -451,17 +411,6 @@ namespace DermDiag.Migrations
                         .WithMany("PatientModelHistories")
                         .HasForeignKey("PatientId")
                         .HasConstraintName("FK__Patient_M__Patie__46E78A0C");
-
-                    b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("DermDiag.Models.Tasks", b =>
-                {
-                    b.HasOne("DermDiag.Models.Patient", "Patient")
-                        .WithMany("Tasks")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Patient");
                 });
@@ -491,8 +440,6 @@ namespace DermDiag.Migrations
                     b.Navigation("Consultes");
 
                     b.Navigation("PatientModelHistories");
-
-                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

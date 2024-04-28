@@ -41,7 +41,14 @@ namespace DermDiag.Controllers
         public IActionResult LoginDoctor(LoginDTO login)
         {
 
-            if (_context.LoginDoctor(login)) { return Ok("Login Successfully"); } else { return Unauthorized("Unauthorized!!"); };
+            try
+            {
+                return Ok(_context.LoginDoctor(login));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /*################################## SEARCH FOR PATIENTS ##################################*/
@@ -87,26 +94,39 @@ namespace DermDiag.Controllers
         /*################################## Update Profile ##################################*/
 
         [HttpPut("EditProfileDoctor")]
-        public IActionResult UpdateDoctorProfile(int doctortId, string newName, string newEmail, string newPhoneNumber, string newPassword, string newImage, string newDescription)
+        public IActionResult UpdateDoctorProfile(UpdateDoctorDtO Update,int doctorId)
         {
+
             try
             {
-                if (_doctorRepository.UpdateDoctorProfile(doctortId, newName, newEmail, newPhoneNumber, newPassword, newImage, newDescription))
-                {
-                    return Ok("Doctor profile updated successfully!");
-                }
-                else
-                {
-                    return NotFound("Doctor not found or failed to update profile.");
-                }
+                return Ok(_doctorRepository.UpdateDoctorProfile(Update, doctorId));
             }
             catch (Exception ex)
             {
-
-                return StatusCode(500, "An error occurred while processing the request.");
-
-
+                return NotFound(ex.Message);
             }
         }
+        /*################################## Add Medicines ##################################*/
+
+
+        [HttpPost("AddMedicines")]
+        public IActionResult AddMedicines(int doctorId, int patientId, List<TreatmentPlanDTO> treatments) {
+
+            try
+            {
+                _doctorRepository.AddTreatmentPlan(doctorId, patientId, treatments);
+                return Ok(); 
+            }
+            catch (NullReferenceException ex){
+                return NotFound(ex.Message); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request."); 
+            }
+
+        }
+
     }
+
 }
