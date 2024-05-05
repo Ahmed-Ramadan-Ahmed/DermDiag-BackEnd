@@ -70,9 +70,16 @@ namespace DermDiag.Repository
                     return false; 
                 }
 
-                
+
+                if (d1.Email == null)
+                {
+
+                    doctor.Email = d1.Email;
+
+                }
+
+
                 doctor.Name = d1.Name;
-                doctor.Email = d1.Email;
                 doctor.Phone = d1.Phone;
                 doctor.Password = d1.Password;
                 doctor.Image = d1.Image;
@@ -94,7 +101,7 @@ namespace DermDiag.Repository
 
         /*################################## Add Medicine list ##################################*/
 
-        public void AddTreatmentPlan(int patientId, int doctorId, List<TreatmentPlanDTO> treatmentPlans)
+        public void AddTreatmentPlan(int doctorId, int patientId, List<TreatmentPlanDTO> treatmentPlans)
         {
             try
             {

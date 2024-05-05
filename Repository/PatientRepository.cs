@@ -177,16 +177,23 @@ namespace DermDiag.Repository
                     return false; // Patient not found
                 }
 
-                // Update patient's information
+                if (P1.Email == null)
+                {
+                   
+                    patient.Email = P1.Email;
+                   
+                }
+               
                 patient.Name = P1.Name;
-                patient.Email = P1.Email;
                 patient.Phone = P1.Phone;
                 patient.Password = P1.Password;
                 patient.Image = P1.Image;
                 patient.Address = P1.Address;
+                
 
+                // Save changes to the database
                 context1.Update(patient);
-                context1.SaveChanges(); // Save changes to the database
+                context1.SaveChanges();
 
                 return true; // Successfully updated
             }
@@ -197,9 +204,10 @@ namespace DermDiag.Repository
             }
         }
 
+
         /*################################## GET Medicine List ##################################*/
 
-        public List<TreatmentPlanDTO> GetTreatmentPlan(int patientId, int doctorId)
+        public List<TreatmentPlanDTO> GetTreatmentPlan(int doctorId, int patientId)
         {
             try
             {
