@@ -184,6 +184,7 @@ namespace DermDiag.Repository
                    
                 }
                
+                // Update all fields except email
                 patient.Name = P1.Name;
                 patient.Phone = P1.Phone;
                 patient.Password = P1.Password;

@@ -3,8 +3,8 @@
     public class TreatmentPlanDTO
     {
         public string MedicineName { get; set; }
-        public int Quantity { get; set; }
-        public int Frequency { get; set; }
+        public string Quantity { get; set; }
+        public string Frequency { get; set; }
 
     }
 }

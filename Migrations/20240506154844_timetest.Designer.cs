@@ -4,6 +4,7 @@ using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DermDiag.Migrations
 {
     [DbContext(typeof(DermDiagContext))]
-    partial class DermDiagContextModelSnapshot : ModelSnapshot
+    [Migration("20240506154844_timetest")]
+    partial class timetest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,9 +167,8 @@ namespace DermDiag.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Patient_ID");
 
-                    b.Property<string>("Frequency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
 
                     b.Property<string>("MedicineName")
                         .IsRequired()
@@ -174,9 +176,8 @@ namespace DermDiag.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("Medicine_Name");
 
-                    b.Property<string>("Quantity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("DoctorId", "PatientId");
 
@@ -325,11 +326,11 @@ namespace DermDiag.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("Endtime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeOnly>("Endtime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Note")
                         .IsRequired()
@@ -341,8 +342,8 @@ namespace DermDiag.Migrations
                     b.Property<int>("RepeatingDays")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Starttime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeOnly>("Starttime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Title")
                         .IsRequired()
