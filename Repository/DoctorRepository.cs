@@ -71,15 +71,8 @@ namespace DermDiag.Repository
                 }
 
 
-                if (d1.Email == null)
-                {
-
-                    doctor.Email = d1.Email;
-
-                }
-
-
                 doctor.Name = d1.Name;
+                doctor.Email = d1.Email;
                 doctor.Phone = d1.Phone;
                 doctor.Password = d1.Password;
                 doctor.Image = d1.Image;
@@ -139,5 +132,6 @@ namespace DermDiag.Repository
             }
         }
 
+       
     }
 }

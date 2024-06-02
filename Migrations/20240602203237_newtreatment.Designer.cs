@@ -4,6 +4,7 @@ using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DermDiag.Migrations
 {
     [DbContext(typeof(DermDiagContext))]
-    partial class DermDiagContextModelSnapshot : ModelSnapshot
+    [Migration("20240602203237_newtreatment")]
+    partial class newtreatment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,27 +319,6 @@ namespace DermDiag.Migrations
                     b.ToTable("Payment", (string)null);
                 });
 
-            modelBuilder.Entity("DermDiag.Models.Review", b =>
-                {
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Feedback")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("int");
-
-                    b.HasKey("PatientId", "DoctorId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("Reviews", (string)null);
-                });
-
             modelBuilder.Entity("DermDiag.Models.Tasks", b =>
                 {
                     b.Property<int>("Id")
@@ -477,25 +459,6 @@ namespace DermDiag.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("DermDiag.Models.Review", b =>
-                {
-                    b.HasOne("DermDiag.Models.Doctor", "Doctor")
-                        .WithMany("Reviews")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DermDiag.Models.Patient", "Patient")
-                        .WithMany("Reviews")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("DermDiag.Models.Tasks", b =>
                 {
                     b.HasOne("DermDiag.Models.Patient", "Patient")
@@ -525,8 +488,6 @@ namespace DermDiag.Migrations
             modelBuilder.Entity("DermDiag.Models.Doctor", b =>
                 {
                     b.Navigation("Consultes");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("DermDiag.Models.Patient", b =>
@@ -534,8 +495,6 @@ namespace DermDiag.Migrations
                     b.Navigation("Consultes");
 
                     b.Navigation("PatientModelHistories");
-
-                    b.Navigation("Reviews");
 
                     b.Navigation("Tasks");
                 });

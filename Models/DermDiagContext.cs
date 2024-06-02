@@ -32,6 +32,8 @@ public partial class DermDiagContext : DbContext
     public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<Tasks> Tasks { get; set; }
+    public virtual DbSet<Review> Reviews { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +44,16 @@ public partial class DermDiagContext : DbContext
             entity.HasKey(entity => entity.Id);
             entity.ToTable("Tasks");
             entity.HasOne(entity => entity.Patient).WithMany(entity => entity.Tasks).HasForeignKey(entity => entity.PatientId);
+
+
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasKey(entity =>new { entity.PatientId,entity.DoctorId });
+            entity.ToTable("Reviews");
+            entity.HasOne(entity => entity.Patient).WithMany(entity => entity.Reviews).HasForeignKey(entity => entity.PatientId);
+            entity.HasOne(entity => entity.Doctor).WithMany(entity => entity.Reviews).HasForeignKey(entity => entity.DoctorId);
 
 
         });
@@ -137,7 +149,7 @@ public partial class DermDiagContext : DbContext
         modelBuilder.Entity<MedicineAdvice>(entity =>
         {
             entity
-                .HasKey(m => new { m.DoctorId, m.PatientId });
+                .HasKey(m => new { m.DoctorId, m.PatientId , m.MedicineName });
 
             entity.ToTable("Medicine_Advice");
 

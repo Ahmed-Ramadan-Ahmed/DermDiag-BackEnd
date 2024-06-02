@@ -30,4 +30,7 @@ public partial class Patient
     public virtual ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
     public virtual ICollection<Tasks> Tasks { get; set; } = new List<Tasks>();
 
+    public virtual ICollection<Review> Reviews { get; set; } = null !;
+
+
 }

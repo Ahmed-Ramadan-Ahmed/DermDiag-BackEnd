@@ -141,7 +141,7 @@ namespace DermDiag.Controllers
 
         /*################################## REMOVE FAVORITE DOCTORS ##################################*/
 
-        [HttpPost("RemoveFavoriteDoctors")]
+        [HttpDelete("RemoveFavoriteDoctors")]
         public IActionResult RemoveFavoriteDoctors(int patientId, int doctorId)
         {
             try
@@ -176,6 +176,8 @@ namespace DermDiag.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        
         /*################################## TreatmentPlan ##################################*/
 
 
@@ -255,6 +257,75 @@ namespace DermDiag.Controllers
             }
 
         }
+
+        /*################################## Add Review ##################################*/
+        [HttpPost("AddReview")]
+        public IActionResult AddReview(int doctorId, int patientId,ReviewDto review)
+        {
+            try
+            {
+                _patientRepository.AddReview(doctorId,patientId,review);
+                return Ok("Review added successfully!");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+        /*################################## Update Review ##################################*/
+
+        [HttpPut("UpdateReview")]
+        public IActionResult UpdateReview(int doctorId, int patientId, ReviewDto review)
+        {
+
+            try
+            {
+                return Ok(_patientRepository.UpdateReview(doctorId, patientId, review));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+        /*################################## Delete Review ##################################*/
+
+        [HttpDelete("DeleteReview")]
+        public IActionResult DeleteReview(int doctorId, int patientId)
+        {
+            try
+            {
+                if (_patientRepository.DeleteReview(doctorId,patientId))
+                {
+                    return Ok("Review removed successfully!");
+                }
+                else
+                {
+                    return NotFound("Patient or doctor not found, or not in Review list.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+        /*################################## Get All Reviews ##################################*/
+
+        [HttpGet("AllReviews")]
+        public ActionResult<IEnumerable<GetReviewDTO>> GetAllReviews(int doctorId)
+        {
+            try
+            {
+                return Ok(_patientRepository.GetAllReviews(doctorId));
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+        }
+
+
     }
 }
 

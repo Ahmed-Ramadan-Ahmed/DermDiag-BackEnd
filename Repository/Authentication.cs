@@ -56,7 +56,7 @@ namespace DermDiag.Repository
 
             if (c1 != null) 
             { return new() {Id=c1.Id,Name=c1.Name,Image=c1.Image,Email=c1.Email,Password=c1.Password,Gender=c1.Gender,Address=c1.Address,Dob=c1.Dob,Phone=c1.Phone}; } 
-            else { throw new NullReferenceException("Doctor not found or failed to update profile."); }
+            else { throw new NullReferenceException("Patient not found or failed to update profile."); }
 
         }
 
@@ -95,7 +95,8 @@ namespace DermDiag.Repository
         {
             var c1 =
             context1.Doctors.FirstOrDefault((p) => p.Email == login.Email && p.Password == login.Password);
-            if (c1 != null) { return new() { Id = c1.Id, Name = c1.Name, Image = c1.Image, Email = c1.Email, Password = c1.Password, Gender = c1.Gender, Address = c1.Address, Fees = c1.Fees, Phone = c1.Phone ,Description=c1.Description, NoReviews =c1.NoReviews,Rating=c1.Rating, NoSessions =c1.NoSessions,AcceptanceStatus=c1.AcceptanceStatus}; } else { throw new NullReferenceException ("Patient not found or failed to update profile."); }
+            if (c1 != null) { return new() { Id = c1.Id, Name = c1.Name, Image = c1.Image, Email = c1.Email, Password = c1.Password, Gender = c1.Gender, Address = c1.Address, Fees = c1.Fees, Phone = c1.Phone ,Description=c1.Description, NoReviews =c1.NoReviews,Rating=c1.Rating, NoSessions =c1.NoSessions,AcceptanceStatus=c1.AcceptanceStatus}; } 
+            else { throw new NullReferenceException ("Doctor not found or failed to update profile."); }
 
         }
 

@@ -36,4 +36,5 @@ public partial class Doctor
     public virtual ICollection<Consulte> Consultes { get; set; } = new List<Consulte>();
 
     public virtual ICollection<Patient> Patients { get; set; } = new List<Patient>();
+    public virtual ICollection<Review> Reviews { get; set; } = null!;
 }

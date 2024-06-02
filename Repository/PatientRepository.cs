@@ -177,30 +177,26 @@ namespace DermDiag.Repository
                     return false; // Patient not found
                 }
 
-                if (P1.Email == null)
-                {
-                   
-                    patient.Email = P1.Email;
-                   
-                }
-               
+
+
                 // Update all fields except email
                 patient.Name = P1.Name;
+                patient.Email = P1.Email;
                 patient.Phone = P1.Phone;
                 patient.Password = P1.Password;
                 patient.Image = P1.Image;
                 patient.Address = P1.Address;
-                
+
 
                 // Save changes to the database
-                context1.Update(patient);
+                context1.Patients.Update(patient);
                 context1.SaveChanges();
 
                 return true; // Successfully updated
             }
             catch (Exception ex)
             {
-                // Handle exceptions, logging, etc.
+
                 return false; // Update failed
             }
         }
@@ -292,7 +288,7 @@ namespace DermDiag.Repository
                 if (task == null)
                 {
                     throw new NullReferenceException("Task not found!");
-                }                
+                }
 
                 context1.Tasks.Remove(task);
                 context1.SaveChanges();
@@ -337,7 +333,139 @@ namespace DermDiag.Repository
             }
         }
 
-    }
 
+        /*################################## Add Review ##################################*/
+        public void AddReview(int doctorId, int patientId, ReviewDto reviewDto)
+        {
+            try
+            {
+                var patient = context1.Patients.FirstOrDefault(p => p.Id == patientId);
+                if (patient == null)
+                {
+                    throw new Exception("Patient not found!");
+                }
+
+                var doctor = context1.Doctors.FirstOrDefault(d => d.Id == doctorId);
+                if (doctor == null)
+                {
+                    throw new Exception("Doctor not found!");
+                }
+
+                var review = new Review
+                {
+                    Feedback = reviewDto.Feedback,
+                    Rate = reviewDto.Rate,
+                    PatientId = patientId,
+                    DoctorId = doctorId,
+
+                };
+
+                context1.Reviews.Add(review);
+                context1.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /*################################## Update Review ##################################*/
+
+        public bool UpdateReview(int doctorId, int patientId, ReviewDto reviewDto)
+        {
+            try
+            {
+                var patient = context1.Patients.FirstOrDefault(p => p.Id == patientId);
+                if (patient == null)
+                {
+                    throw new Exception("Patient not found!");
+                }
+
+                var doctor = context1.Doctors.FirstOrDefault(d => d.Id == doctorId);
+                if (doctor == null)
+                {
+                    throw new Exception("Doctor not found!");
+                }
+                var review = new Review
+                {
+                    Feedback = reviewDto.Feedback,
+                    Rate = reviewDto.Rate,
+                    PatientId = patientId,
+                    DoctorId = doctorId,
+
+                };
+
+
+                context1.Reviews.Update(review);
+                context1.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /*################################## Delete Review ##################################*/
+
+        public bool DeleteReview(int doctorId, int patientId)
+        {
+            try
+            {
+                var patient = context1.Patients.FirstOrDefault(p => p.Id == patientId);
+                if (patient == null)
+                {
+                    throw new Exception("Patient not found!");
+                }
+
+                var doctor = context1.Doctors.FirstOrDefault(d => d.Id == doctorId);
+                if (doctor == null)
+                {
+                    throw new Exception("Doctor not found!");
+                }
+
+                var review = context1.Reviews.FirstOrDefault(r => r.PatientId == patientId && r.DoctorId == doctorId);
+                if (review == null)
+                {
+                    throw new Exception("Review not found!");
+                }
+
+                context1.Reviews.Remove(review);
+                context1.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /*################################## Get Review list ##################################*/
+
+        public List<GetReviewDTO> GetAllReviews(int doctorId)
+        {
+            var doctor = context1.Doctors.Include(d => d.Reviews).FirstOrDefault(d => d.Id == doctorId);
+            if (doctor == null)
+            {
+                throw new Exception("Doctor not found!");
+            }
+
+            var reviews = context1.Reviews
+                .Where(r => r.DoctorId == doctorId)
+                .Include(r => r.Patient) // Include the patient for additional information
+                .Select(r => new GetReviewDTO
+                {
+                    Feedback = r.Feedback,
+                    Rate = r.Rate,
+                    PatientName = r.Patient.Name,
+                    CurrentDate = DateTime.Now // Or r.CreatedDate if you have a creation date field
+                })
+                .ToList();
+
+            return reviews;
+        }
+
+    }
 
 }

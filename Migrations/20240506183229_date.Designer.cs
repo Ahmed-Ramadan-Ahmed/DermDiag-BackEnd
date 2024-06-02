@@ -4,6 +4,7 @@ using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DermDiag.Migrations
 {
     [DbContext(typeof(DermDiagContext))]
-    partial class DermDiagContextModelSnapshot : ModelSnapshot
+    [Migration("20240506183229_date")]
+    partial class date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,20 +167,21 @@ namespace DermDiag.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Patient_ID");
 
-                    b.Property<string>("MedicineName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Medicine_Name");
-
                     b.Property<string>("Frequency")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicineName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Medicine_Name");
 
                     b.Property<string>("Quantity")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("DoctorId", "PatientId", "MedicineName");
+                    b.HasKey("DoctorId", "PatientId");
 
                     b.HasIndex("PatientId");
 
@@ -316,27 +320,6 @@ namespace DermDiag.Migrations
                     b.ToTable("Payment", (string)null);
                 });
 
-            modelBuilder.Entity("DermDiag.Models.Review", b =>
-                {
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Feedback")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("int");
-
-                    b.HasKey("PatientId", "DoctorId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("Reviews", (string)null);
-                });
-
             modelBuilder.Entity("DermDiag.Models.Tasks", b =>
                 {
                     b.Property<int>("Id")
@@ -345,11 +328,11 @@ namespace DermDiag.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("Endtime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeOnly>("Endtime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Note")
                         .IsRequired()
@@ -361,8 +344,8 @@ namespace DermDiag.Migrations
                     b.Property<int>("RepeatingDays")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Starttime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeOnly>("Starttime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -477,25 +460,6 @@ namespace DermDiag.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("DermDiag.Models.Review", b =>
-                {
-                    b.HasOne("DermDiag.Models.Doctor", "Doctor")
-                        .WithMany("Reviews")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DermDiag.Models.Patient", "Patient")
-                        .WithMany("Reviews")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("DermDiag.Models.Tasks", b =>
                 {
                     b.HasOne("DermDiag.Models.Patient", "Patient")
@@ -525,8 +489,6 @@ namespace DermDiag.Migrations
             modelBuilder.Entity("DermDiag.Models.Doctor", b =>
                 {
                     b.Navigation("Consultes");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("DermDiag.Models.Patient", b =>
@@ -534,8 +496,6 @@ namespace DermDiag.Migrations
                     b.Navigation("Consultes");
 
                     b.Navigation("PatientModelHistories");
-
-                    b.Navigation("Reviews");
 
                     b.Navigation("Tasks");
                 });
