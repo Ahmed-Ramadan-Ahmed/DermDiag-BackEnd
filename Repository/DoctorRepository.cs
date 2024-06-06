@@ -42,7 +42,9 @@ namespace DermDiag.Repository
             return returnPatients;
         }
 
+
         /*################################## SEARCH FOR PATIENTS ##################################*/
+
 
         public List<PatientHomeDTO> SearchPatientsByName(string patientName)
         {
