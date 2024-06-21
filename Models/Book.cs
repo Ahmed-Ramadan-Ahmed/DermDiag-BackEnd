@@ -5,11 +5,11 @@ namespace DermDiag.Models;
 
 public partial class Book
 {
-    public int? PatientId { get; set; }
+    public int PatientId { get; set; }
 
-    public int? DoctorId { get; set; }
+    public int DoctorId { get; set; }
 
-    public int? PaymentId { get; set; }
+    public int PaymentId { get; set; }
 
     public DateTime? AppointmentDate { get; set; }
 

@@ -24,25 +24,25 @@ namespace DermDiag.Migrations
 
             modelBuilder.Entity("DermDiag.Models.Book", b =>
                 {
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int")
+                        .HasColumnName("Patient_ID");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int")
+                        .HasColumnName("Doctor_ID");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int")
+                        .HasColumnName("Payment_ID");
+
                     b.Property<DateTime?>("AppointmentDate")
                         .HasColumnType("datetime")
                         .HasColumnName("Appointment_Date");
 
-                    b.Property<int?>("DoctorId")
-                        .HasColumnType("int")
-                        .HasColumnName("Doctor_ID");
-
-                    b.Property<int?>("PatientId")
-                        .HasColumnType("int")
-                        .HasColumnName("Patient_ID");
-
-                    b.Property<int?>("PaymentId")
-                        .HasColumnType("int")
-                        .HasColumnName("Payment_ID");
+                    b.HasKey("PatientId", "DoctorId", "PaymentId");
 
                     b.HasIndex("DoctorId");
-
-                    b.HasIndex("PatientId");
 
                     b.HasIndex("PaymentId");
 
@@ -59,20 +59,34 @@ namespace DermDiag.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Doctor_ID");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("Date");
+
                     b.Property<bool?>("DoctorAttendance")
                         .HasColumnType("bit")
                         .HasColumnName("Doctor_Attendance");
 
+                    b.Property<string>("DoctorLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("DoctorLink");
+
                     b.Property<bool?>("PatientAttendance")
                         .HasColumnType("bit")
                         .HasColumnName("Patient_Attendance");
+
+                    b.Property<string>("PatientLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("PatientLink");
 
                     b.Property<string>("Status")
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.HasKey("PatientId", "DoctorId")
+                    b.HasKey("PatientId", "DoctorId", "Date")
                         .HasName("PK__Consulte__2FF13E69B0C57837");
 
                     b.HasIndex("DoctorId");
@@ -144,6 +158,9 @@ namespace DermDiag.Migrations
                     b.Property<float?>("Rating")
                         .HasColumnType("real");
 
+                    b.Property<int>("WalletId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id")
                         .HasName("PK__Doctor__3214EC277293A442");
 
@@ -152,6 +169,34 @@ namespace DermDiag.Migrations
                         .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("Doctor", (string)null);
+                });
+
+            modelBuilder.Entity("DermDiag.Models.EmailAttachment", b =>
+                {
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Filename")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("EmailAttachment", (string)null);
+                });
+
+            modelBuilder.Entity("DermDiag.Models.EmailMessage", b =>
+                {
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("To")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("EmailMessage", (string)null);
                 });
 
             modelBuilder.Entity("DermDiag.Models.MedicineAdvice", b =>
@@ -248,6 +293,9 @@ namespace DermDiag.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
 
+                    b.Property<int>("WalletId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id")
                         .HasName("PK__Patient__3214EC277AF761B0");
 
@@ -289,26 +337,32 @@ namespace DermDiag.Migrations
             modelBuilder.Entity("DermDiag.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ID");
 
-                    b.Property<DateOnly?>("Date")
-                        .HasColumnType("date");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(10, 2)");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Method")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<decimal?>("Quantity")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<string>("Receiver")
+                    b.Property<int?>("ReceiverID")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("Sender")
+                    b.Property<int?>("SenderID")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id")
                         .HasName("PK__Payment__3214EC27357C9B09");
@@ -375,6 +429,24 @@ namespace DermDiag.Migrations
                     b.ToTable("Tasks", (string)null);
                 });
 
+            modelBuilder.Entity("DermDiag.Models.Wallet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("Balance");
+
+                    b.HasKey("Id")
+                        .HasName("ID");
+
+                    b.ToTable("Wallet", (string)null);
+                });
+
             modelBuilder.Entity("Favorite", b =>
                 {
                     b.Property<int>("PatientId")
@@ -398,16 +470,22 @@ namespace DermDiag.Migrations
                     b.HasOne("DermDiag.Models.Doctor", "Doctor")
                         .WithMany()
                         .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__Book__Doctor_ID__4D94879B");
 
                     b.HasOne("DermDiag.Models.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__Book__Patient_ID__4CA06362");
 
                     b.HasOne("DermDiag.Models.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__Book__Payment_ID__4E88ABD4");
 
                     b.Navigation("Doctor");

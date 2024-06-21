@@ -11,40 +11,31 @@ namespace DermDiag.Repository
         public DoctorRepository(DermDiagContext context)
         {
             _context = context;
-
         }
         /*################################## GET ALL PATIENTS ##################################*/
 
         public List<PatientHomeDTO> GetAllPatients(int Id)
         {
-            var doctor = _context.Doctors.Include(d => d.Patients).FirstOrDefault(d => d.Id == Id);
-            if (doctor == null)
-            {
-                throw new Exception("Doctor not found!");
-            }
+            var Patients = _context.Books
+                                .Where(book => book.DoctorId == Id)
+                                .Select(book => new PatientHomeDTO
+                                {
+                                    Id = book.PatientId,
+                                    AppointmentDate = book.AppointmentDate,
+                                    Name = _context.Patients.FirstOrDefault(P => P.Id == book.PatientId).Name,
+                                    Image = _context.Patients.FirstOrDefault(P => P.Id == book.PatientId).Image
+                                })
+                                .ToList();
 
-            if (doctor.Patients == null || doctor.Patients.Count == 0)
+            if(Patients == null)
             {
                 throw new Exception("No patients associated with this doctor!");
             }
 
-            List<PatientHomeDTO> returnPatients = new List<PatientHomeDTO>();
-            foreach (var patient in doctor.Patients)
-            {
-                var appointmentDate = _context.Books.FirstOrDefault(b => b.DoctorId == Id && b.PatientId == patient.Id)?.AppointmentDate;
-                returnPatients.Add(new PatientHomeDTO
-                {
-                    Name = patient.Name,
-                    Image = patient.Image,
-                    AppointmentDate = appointmentDate
-                });
-            }
-            return returnPatients;
+            return Patients;
         }
 
-
         /*################################## SEARCH FOR PATIENTS ##################################*/
-
 
         public List<PatientHomeDTO> SearchPatientsByName(string patientName)
         {

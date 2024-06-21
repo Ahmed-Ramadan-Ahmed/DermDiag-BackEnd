@@ -40,7 +40,6 @@ namespace DermDiag.Controllers
 
         public IActionResult LoginDoctor(LoginDTO login)
         {
-
             try
             {
                 return Ok(_context.LoginDoctor(login));

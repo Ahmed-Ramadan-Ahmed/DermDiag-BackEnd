@@ -67,11 +67,11 @@ namespace DermDiag.Controllers
         /*################################## GET ALL DOCTORS ##################################*/
 
         [HttpGet("GetAllDoctors")]
-        public ActionResult<IEnumerable<DoctorHomeDTO>> GetAll(int id)
+        public ActionResult<IEnumerable<DoctorHomeDTO>> GetAllDoctors(int id)
         {
             try
             {
-                return Ok(_patientRepository.GetAll(id));
+                return Ok(_patientRepository.GetAllDoctors(id));
             }
             catch (Exception ex)
             {
@@ -243,8 +243,7 @@ namespace DermDiag.Controllers
         {
 
             try
-            {
-
+            { 
                 return Ok(_patientRepository.GetTasks(patientId));
             }
             catch (NullReferenceException ex)
@@ -325,7 +324,27 @@ namespace DermDiag.Controllers
 
         }
 
-
+        /*################################## Book ##################################*/
+        [HttpPost("CreateBook")]
+        public IActionResult CreateBook(BookDTO book)
+        {
+            try
+            {
+                return Ok(_patientRepository.CreateBook(book));
+            }
+            catch (ArgumentNullException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (AccessViolationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
     }
 }
 

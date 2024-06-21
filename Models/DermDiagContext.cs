@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace DermDiag.Models;
@@ -33,19 +34,33 @@ public partial class DermDiagContext : DbContext
 
     public virtual DbSet<Tasks> Tasks { get; set; }
     public virtual DbSet<Review> Reviews { get; set; }
+    public virtual DbSet<EmailMessage> EmailMessages { get; set; }
+    public virtual DbSet<EmailAttachment> EmailAttachments { get; set; }
+    public virtual DbSet<Wallet> Wallets { get; set; }
 
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
+        modelBuilder.Entity<EmailAttachment>(entity =>
+        {
+            entity.HasNoKey();
+            entity.ToTable("EmailAttachment");
+        });
+
+
+        modelBuilder.Entity<EmailMessage>(entity =>
+        {
+            entity.HasNoKey();
+            entity.ToTable("EmailMessage");
+        });
+
         modelBuilder.Entity<Tasks>(entity =>
         {
             entity.HasKey(entity => entity.Id);
             entity.ToTable("Tasks");
             entity.HasOne(entity => entity.Patient).WithMany(entity => entity.Tasks).HasForeignKey(entity => entity.PatientId);
-
-
         });
 
         modelBuilder.Entity<Review>(entity =>
@@ -57,15 +72,35 @@ public partial class DermDiagContext : DbContext
 
 
         });
-        modelBuilder.Entity<Book>(entity =>
+        modelBuilder.Entity<Wallet>(entity =>
         {
             entity
-                .HasNoKey()
+            .HasKey(e => e.Id)
+            .HasName("ID");
+
+            entity.
+            ToTable("Wallet");
+
+            entity
+            .Property(e => e.Balance)
+            .HasColumnName("Balance")
+            .HasColumnType("decimal(10, 2)");
+
+        });
+
+        modelBuilder.Entity<Book>(entity =>
+        {
+            
+            entity
+                .HasKey(b => new { b.PatientId, b.DoctorId, b.PaymentId });
+
+            entity
                 .ToTable("Book");
 
             entity.Property(e => e.AppointmentDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Appointment_Date");
+
             entity.Property(e => e.DoctorId).HasColumnName("Doctor_ID");
             entity.Property(e => e.PatientId).HasColumnName("Patient_ID");
             entity.Property(e => e.PaymentId).HasColumnName("Payment_ID");
@@ -81,16 +116,20 @@ public partial class DermDiagContext : DbContext
             entity.HasOne(d => d.Payment).WithMany()
                 .HasForeignKey(d => d.PaymentId)
                 .HasConstraintName("FK__Book__Payment_ID__4E88ABD4");
+            
         });
 
         modelBuilder.Entity<Consulte>(entity =>
         {
-            entity.HasKey(e => new { e.PatientId, e.DoctorId }).HasName("PK__Consulte__2FF13E69B0C57837");
+            entity.HasKey(e => new { e.PatientId, e.DoctorId , e.Date}).HasName("PK__Consulte__2FF13E69B0C57837");
 
             entity.ToTable("Consulte");
 
             entity.Property(e => e.PatientId).HasColumnName("Patient_ID");
             entity.Property(e => e.DoctorId).HasColumnName("Doctor_ID");
+            entity.Property(e => e.Date).HasColumnName("Date");
+            entity.Property(e => e.PatientLink).HasColumnName("PatientLink");
+            entity.Property(e => e.DoctorLink).HasColumnName("DoctorLink");
             entity.Property(e => e.DoctorAttendance).HasColumnName("Doctor_Attendance");
             entity.Property(e => e.PatientAttendance).HasColumnName("Patient_Attendance");
             entity.Property(e => e.Status)
@@ -117,7 +156,6 @@ public partial class DermDiagContext : DbContext
             entity.HasIndex(e => e.Email, "UQ__Doctor__A9D105344BCD1DAD").IsUnique();
 
             entity.Property(e => e.Id)
-              //  .ValueGeneratedNever()
                 .HasColumnName("ID");
             entity.Property(e => e.AcceptanceStatus).HasColumnName("Acceptance_Status");
             entity.Property(e => e.Address).HasMaxLength(255);
@@ -256,17 +294,20 @@ public partial class DermDiagContext : DbContext
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Payment__3214EC27357C9B09");
+            entity
+            .HasKey(e => e.Id)
+            .HasName("PK__Payment__3214EC27357C9B09");
 
             entity.ToTable("Payment");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
+
             entity.Property(e => e.Method).HasMaxLength(50);
-            entity.Property(e => e.Quantity).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.Receiver).HasMaxLength(255);
-            entity.Property(e => e.Sender).HasMaxLength(255);
+            entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.ReceiverID).HasMaxLength(255);
+            entity.Property(e => e.SenderID).HasMaxLength(255);
         });
 
         OnModelCreatingPartial(modelBuilder);

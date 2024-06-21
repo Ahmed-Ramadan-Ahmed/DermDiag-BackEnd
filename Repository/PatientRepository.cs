@@ -2,29 +2,34 @@
 using DermDiag.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
+using DermDiag.Repository;
+using DermDiag.Migrations;
 
 namespace DermDiag.Repository
 {
     public class PatientRepository
     {
         private readonly DermDiagContext context1;
+        //private static readonly MeetingRepository _MeetingRepository = new MeetingRepository();
         public PatientRepository(DermDiagContext context)
         {
             context1 = context;
+            //_MeetingRepository = meeting_repository;
         }
 
         /*################################## GET ALL DOCTORS ##################################*/
 
-        public List<DoctorHomeDTO> GetAll(int Id)
+        public List<DoctorHomeDTO> GetAllDoctors(int Id)
         {
-            var docotrs = context1.Doctors.ToList();
             var patient = context1.Patients.Include(p => p.Doctors).FirstOrDefault(p => p.Id == Id);
 
             if (patient == null)
             {
-                throw new Exception("Not Found!");
+                throw new Exception("Patient Not Found!");
             }
 
+            var docotrs = context1.Doctors.ToList();
+            
             List<DoctorHomeDTO> ReturnDoctors = new List<DoctorHomeDTO>();
             foreach (var doctor in docotrs)
             {
@@ -34,7 +39,7 @@ namespace DermDiag.Repository
                     Id = doctor.Id,
                     Name = doctor.Name,
                     Rating = doctor.Rating,
-                    IsFavourite = patient.Doctors.FirstOrDefault(d => d.Id == doctor.Id) != null ? true : false,
+                    IsFavourite = patient.Doctors.Any(d => d.Id == doctor.Id) ? true : false,
                 });
             }
             return ReturnDoctors;
@@ -466,6 +471,74 @@ namespace DermDiag.Repository
             return reviews;
         }
 
+        /*################################## Book ##################################*/
+
+        public bool CreateBook(BookDTO book)
+        {
+            var Patient = context1.Patients.Find(book.PatientID);
+            if (Patient == null)
+            {
+                throw new ArgumentNullException("Patient Not Found");
+            }
+
+            var Doctor = context1.Doctors.Find(book.DoctorID);
+
+            if (Doctor == null)
+            {
+                throw new ArgumentNullException("Doctor Not Found");
+            }
+
+            const int SessionTime = 1;
+
+            var Apointments = context1.Books.Where(BOOK => BOOK.DoctorId == book.DoctorID).Select(Apointment => Apointment.AppointmentDate);
+
+            var IsAvaibleApointment =
+            Apointments.Where(Apointment =>
+            Apointment != null &&
+            Apointment.Value.Year == book.Date.Year &&
+            Apointment.Value.Month == book.Date.Month &&
+            Apointment.Value.Day == book.Date.Day &&
+            (Apointment.Value.Hour == book.Date.Hour ||
+            (Apointment.Value.Hour - book.Date.Hour == SessionTime && Apointment.Value.Minute < book.Date.Minute) ||
+            (Apointment.Value.Hour - book.Date.Hour == -SessionTime && Apointment.Value.Minute > book.Date.Minute)
+            )).Count() == 0;
+
+            if (!IsAvaibleApointment)
+            {
+                throw new AccessViolationException("Apointment Not Available");
+            }
+            else if(book.Date < DateTime.Now.AddHours(12))
+            {
+                throw new AccessViolationException("Apointment can't be earlier than 12 hour from now !");
+            }
+
+            //var doctor = context1.Doctors.FirstOrDefault(d => d.Id == book.DoctorID);
+           // var patient = context1.Patients.FirstOrDefault(d => d.Id == book.PatientID);
+            
+
+            Payment payment = new()
+            {
+                ReceiverID = book.DoctorID,
+                SenderID = book.PatientID,
+                Date = DateTime.Now,
+                Status = "Comming"
+            };
+            context1.Payments.Add(payment);
+            context1.SaveChanges();
+            
+            context1.Books.Add(
+                new()
+                {
+                    PatientId = book.PatientID,
+                    DoctorId = book.DoctorID,
+                    PaymentId = payment.Id,
+                    AppointmentDate = book.Date
+                }
+                );
+            context1.SaveChanges(); 
+
+            return true;
+        }
     }
 
 }

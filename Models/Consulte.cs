@@ -6,8 +6,10 @@ namespace DermDiag.Models;
 public partial class Consulte
 {
     public int PatientId { get; set; }
-
     public int DoctorId { get; set; }
+    public DateTime Date { get; set; }
+    public string PatientLink { get; set; }
+    public string DoctorLink { get; set; }
 
     public bool? DoctorAttendance { get; set; }
 
