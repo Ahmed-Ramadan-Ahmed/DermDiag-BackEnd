@@ -48,7 +48,7 @@ namespace DermDiag.Repository
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseContent);
-                var RoomUrl = responseData.GetProperty("roomUrl").GetString();
+                var RoomUrl =  responseData.GetProperty("roomUrl").GetString();
                 var HostRoomURL = responseData.GetProperty("hostRoomUrl").GetString();
 
                 MeetingDTO meetingDTO = new MeetingDTO

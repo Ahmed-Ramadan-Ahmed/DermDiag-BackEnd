@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DermDiag.Models;
 using Microsoft.PowerBI.Security;
+using Microsoft.Extensions.Options;
+using System.Numerics;
 
 namespace DermDiag.Controllers
 {
@@ -18,11 +20,17 @@ namespace DermDiag.Controllers
     {
         private readonly Authentication _context;
         private readonly PatientRepository _patientRepository;
+        private readonly EmailRepository _emailRepository;
+        private readonly EmailTemplates _emailTemplates;
+        private readonly DermDiagContext _database;
 
-        public PatientsController(Authentication context, PatientRepository patientcontext)
+        public PatientsController(Authentication context, PatientRepository patientcontext, IOptions<EmailTemplates> emailTemplates, EmailRepository emailRepository, DermDiagContext database)
         {
             _context = context;
             _patientRepository = patientcontext;
+            _emailTemplates = emailTemplates.Value;
+            _emailRepository = emailRepository;
+            _database = database;
         }
 
 
@@ -38,10 +46,29 @@ namespace DermDiag.Controllers
 
         [HttpPost("Register")]
 
-        public IActionResult Register(RegisterrDTO register)
+        public async Task<IActionResult> Register(RegisterrDTO register)
         {
             // Check uniqueness of email
-            if (_context.Register(register)) { return Ok("Registration successful!"); } else { return Conflict("Email is already in use."); }
+            if (_context.Register(register)) 
+            {
+                EmailMessage emailMessage = new EmailMessage()
+                {
+                    To = register.Email,
+                    Subject = "Welcome to DermDiag✨ Unlock Your Skin Health Journey with Your New Account",
+                    Body = _emailTemplates.WelcomeEmail
+                                          .Replace("Doaa_Nady", register.Name)
+                                          .Replace("12345678", register.Password)
+                                          .Replace("Dear Doaa", "Dear " + register.Name)
+
+                };
+                await _emailRepository.SendEmailAsync(emailMessage);
+
+                return Ok("Registration successful!"); 
+            } 
+            else 
+            {
+                return Conflict("Email is already in use."); 
+            }
 
         }
 
@@ -50,12 +77,28 @@ namespace DermDiag.Controllers
 
         [HttpPost("Login")]
 
-        public IActionResult Login(LoginDTO login)
+        public async Task<IActionResult> Login(LoginDTO login)
         {
 
             try
             {
-                return Ok(_context.Login(login));
+                var LoginStatus = _context.Login(login);
+                if(LoginStatus != null) 
+                {
+                    var patient = _database.Patients.FirstOrDefault(d => d.Email == login.Email);
+
+                    EmailMessage emailMessage = new EmailMessage()
+                    {
+                        To = login.Email,
+                        Subject = "⚠️ Security Alert: Recent Login Attempt to Your DermDiag Account",
+                        Body = _emailTemplates.LoginAttemptNotification
+                                          .Replace("Dear Doaa", "Dear " + patient.Name)
+                                          .Replace("22 Jun 2024, 23:25 PM", DateTime.Now.ToString())
+                    };
+                    await _emailRepository.SendEmailAsync(emailMessage);
+                }
+
+                return Ok(LoginStatus);
             }
             catch (Exception ex)
             {
@@ -241,7 +284,6 @@ namespace DermDiag.Controllers
         [HttpGet("GetTasks")]
         public IActionResult GetTasks(int patientId)
         {
-
             try
             { 
                 return Ok(_patientRepository.GetTasks(patientId));
@@ -277,7 +319,6 @@ namespace DermDiag.Controllers
         [HttpPut("UpdateReview")]
         public IActionResult UpdateReview(int doctorId, int patientId, ReviewDto review)
         {
-
             try
             {
                 return Ok(_patientRepository.UpdateReview(doctorId, patientId, review));

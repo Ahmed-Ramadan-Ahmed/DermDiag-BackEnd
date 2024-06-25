@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using static System.Net.WebRequestMethods;
 
 namespace DermDiag.Repository
 {
@@ -36,7 +37,7 @@ namespace DermDiag.Repository
             return jsonResponse.GetProperty("token").GetString();
         }
 
-        public async Task<string> CreateOrderAsync(string token,decimal? Amount)
+        public async Task<int> CreateOrderAsync(string token,decimal? Amount)
         {
             var data = new
             {
@@ -61,38 +62,21 @@ namespace DermDiag.Repository
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonResponse = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-            return jsonResponse.GetProperty("client_url").GetString();
+            return jsonResponse.GetProperty("id").GetInt32();
         }
 
-        public async Task<string> RequestPaymentKeyAsync(string token, int orderId , decimal Amount)
+        public async Task<string> GetPaymentStatusAsync(int paymentId)
         {
-            var data = new
-            {
-                auth_token = token,
-                amount_cents = Amount,
-                expiration = 3600,
-                order_id = orderId,
-                billing_data = new{ },
-                currency = "EGP",
-                integration_id = _integrationID
-            };
+            var requestUrl = $"https://accept.paymobsolutions.com/api/acceptance/transactions/{paymentId}";
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            request.Headers.Add("Authorization", $"Bearer {_apiKey}");
 
-            var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync("https://accept.paymob.com/api/ecommerce/products", content);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JsonSerializer.Deserialize<JsonElement>(responseString);
-
-            return jsonResponse.GetProperty("token").GetString();
+            var paymentStatusResponse = await response.Content.ReadFromJsonAsync<string>();
+            return paymentStatusResponse;
         }
-
-        public string GetIframeUrl(string paymentToken)
-        {
-            return $"https://accept.paymob.com/api/acceptance/iframes/452689?payment_token={paymentToken}";
-        }
-
 
         public async Task<Wallet> GetWalletByIdAsync(int walletId)
         {
@@ -104,7 +88,6 @@ namespace DermDiag.Repository
             _context.Wallets.Update(wallet);
             return await _context.SaveChangesAsync() > 0;
         }
-
         public async Task<bool> AddPaymentRecordAsync(Payment payment)
         {
             _context.Payments.Add(payment);

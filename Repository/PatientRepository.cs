@@ -38,7 +38,7 @@ namespace DermDiag.Repository
                     Image = doctor.Image,
                     Id = doctor.Id,
                     Name = doctor.Name,
-                    Rating = doctor.Rating,
+                    Rating = doctor.Rating / doctor.NoReviews,
                     IsFavourite = patient.Doctors.Any(d => d.Id == doctor.Id) ? true : false,
                 });
             }
@@ -356,13 +356,21 @@ namespace DermDiag.Repository
                     throw new Exception("Doctor not found!");
                 }
 
+                if (doctor.Rating == null)
+                {
+                    doctor.Rating = 0;
+                    doctor.NoReviews = 0; 
+                }
+
+                doctor.Rating += reviewDto.Rate;
+                doctor.NoReviews++;
+
                 var review = new Review
                 {
                     Feedback = reviewDto.Feedback,
                     Rate = reviewDto.Rate,
                     PatientId = patientId,
-                    DoctorId = doctorId,
-
+                    DoctorId = doctorId
                 };
 
                 context1.Reviews.Add(review);
@@ -473,7 +481,7 @@ namespace DermDiag.Repository
 
         /*################################## Book ##################################*/
 
-        public bool CreateBook(BookDTO book)
+        public string CreateBook(BookDTO book)
         {
             var Patient = context1.Patients.Find(book.PatientID);
             if (Patient == null)
@@ -512,10 +520,6 @@ namespace DermDiag.Repository
                 throw new AccessViolationException("Apointment can't be earlier than 12 hour from now !");
             }
 
-            //var doctor = context1.Doctors.FirstOrDefault(d => d.Id == book.DoctorID);
-           // var patient = context1.Patients.FirstOrDefault(d => d.Id == book.PatientID);
-            
-
             Payment payment = new()
             {
                 ReceiverID = book.DoctorID,
@@ -537,7 +541,7 @@ namespace DermDiag.Repository
                 );
             context1.SaveChanges(); 
 
-            return true;
+            return "https://buy.stripe.com/test_5kA4jL02Q4mL95C8ww";
         }
     }
 

@@ -16,7 +16,7 @@ builder.Services.AddScoped<DoctorRepository>();
 builder.Services.AddScoped<MeetingRepository>();
 builder.Services.AddScoped<PaymentRepository>();
 builder.Services.AddScoped<EmailRepository>();
-
+builder.Services.Configure<EmailTemplates>(builder.Configuration.GetSection("EmailTemplates"));
 builder.Services.AddControllers();
 
 builder.Services.AddHttpClient<PaymentRepository>();

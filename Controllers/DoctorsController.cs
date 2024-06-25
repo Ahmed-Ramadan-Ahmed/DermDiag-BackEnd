@@ -8,6 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using DermDiag.Models;
 using DermDiag.DTO;
 using DermDiag.Repository;
+using System.IO;
+using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using DermDiag.Models;
+using MimeKit;
+using MailKit.Net.Smtp;
+using System.Threading.Tasks;
+using Org.BouncyCastle.Utilities;
+using MimeKit.Utils;
+
 
 namespace DermDiag.Controllers
 {
@@ -17,20 +27,47 @@ namespace DermDiag.Controllers
     {
         private readonly Authentication _context;
         private readonly DoctorRepository _doctorRepository;
-        public DoctorsController(Authentication context, DoctorRepository doctorRepository)
+        private readonly EmailRepository _emailRepository;
+        private readonly EmailTemplates _emailTemplates;
+        private readonly DermDiagContext _database;
+        public DoctorsController(Authentication context, DoctorRepository doctorRepository, IOptions<EmailTemplates> emailTemplates, EmailRepository emailRepository , DermDiagContext database)
         {
             _context = context;
             _doctorRepository = doctorRepository;
+            _emailTemplates = emailTemplates.Value;
+            _emailRepository = emailRepository;
+            _database = database;
         }
 
         /*################################## REGISTERATION ##################################*/
 
         [HttpPost("RegisterDoctor")]
 
-        public IActionResult RegisterDoctor(DoctorRegisterDTO register)
+        public async Task<IActionResult> RegisterDoctor(DoctorRegisterDTO register)
         {
-            // Check uniqueness of email
-            if (_context.RegisterDoctor(register)) { return Ok("Registration successful!"); } else { return Conflict("Email is already in use."); }
+            if (_context.RegisterDoctor(register)) 
+            {
+
+                EmailMessage emailMessage = new EmailMessage()
+                {
+                    To = register.Email,
+                    Subject = "Welcome to DermDiag✨ Unlock Your Skin Health Journey with Your New Account",
+                    Body = _emailTemplates.WelcomeEmail
+                                          .Replace("Doaa_Nady", register.Name)
+                                          .Replace("12345678", register.Password)
+                                          .Replace("Dear Doaa","Dear Dr. "+register.Name)
+
+                };
+                await _emailRepository.SendEmailAsync(emailMessage);
+
+
+
+                return Ok("Registration successful!"); 
+            }
+            else 
+            {
+                return Conflict("Not valid Email or already in use."); 
+            }
 
         }
 
@@ -38,11 +75,30 @@ namespace DermDiag.Controllers
 
         [HttpPost("LoginDoctor")]
 
-        public IActionResult LoginDoctor(LoginDTO login)
+        public async Task<IActionResult> LoginDoctor(LoginDTO login)
         {
             try
             {
-                return Ok(_context.LoginDoctor(login));
+                var LoginStatus = _context.LoginDoctor(login);
+                var doctor = _database.Doctors.FirstOrDefault(d => d.Email == login.Email);
+
+                if (doctor == null)
+                {
+                    return Ok(LoginStatus);
+                }
+
+                EmailMessage emailMessage = new EmailMessage()
+                {
+                    To = login.Email,
+                    Subject = "⚠️ Security Alert: Recent Login Attempt to Your DermDiag Account",
+                    Body = _emailTemplates.LoginAttemptNotification
+                                          .Replace("Dear Doaa", "Dear Dr. " + doctor.Name)
+                                          .Replace("22 Jun 2024, 23:25 PM" , DateTime.Now.ToString() )
+                };
+                await _emailRepository.SendEmailAsync(emailMessage);
+
+
+                return Ok(LoginStatus);
             }
             catch (Exception ex)
             {

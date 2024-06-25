@@ -65,6 +65,7 @@ public partial class DermDiagContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
+
             entity.HasKey(entity =>new { entity.PatientId,entity.DoctorId });
             entity.ToTable("Reviews");
             entity.HasOne(entity => entity.Patient).WithMany(entity => entity.Reviews).HasForeignKey(entity => entity.PatientId);
